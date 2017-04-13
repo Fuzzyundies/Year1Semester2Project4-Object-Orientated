@@ -1,0 +1,19 @@
+Diary of Changes from Project 3 to Project 4:
+
+Stephen:
+
+Daniel:
+
+TJ:
+
+Eric:
+Switched from command prompt to JOptionPane
+Added both Airport Object and Flight Object
+= Changed both multidimensional arraylists into arraylists of objects for the cooresponding object
+Split writeFile into writeAirportFile and writeFlightFile
+Decided to go with multiple inputs in one dialog box
+Minimal changes to searchFlightByAirport, added success/error messages
+Added addFlight
+Removed sort function
+
+
