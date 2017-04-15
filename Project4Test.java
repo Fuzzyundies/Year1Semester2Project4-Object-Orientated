@@ -7,6 +7,7 @@ public class Project4Test
 	public static ArrayList<Flights> flightDetails = new ArrayList<Flights>();
 	public static File file1 = new File("Airports.txt");
 	public static File file2 = new File("Flights.txt");
+	public static int userSelectionIndex;
 	public static void main(String [] args) throws IOException
 	{
 		int choice ;
@@ -74,6 +75,7 @@ public class Project4Test
 		int index = 0, amountFound = 0;
 		String errorMessage1 = "Departure airport and arrival airport cannot be the same.";
 		String errorMessage2 = "One or both fields were empty.";
+		String cancel = "Search cancelled by user.";
 		String airport1 = "";
 		String airport2 = "";
 		String success = "";
@@ -92,52 +94,56 @@ public class Project4Test
 		panel.add(new JLabel("And arriving at airport name:"));
 		panel.add(arrivalAirport);
 		
-		JOptionPane.showMessageDialog(null,panel,"Search for flight by airports", JOptionPane.PLAIN_MESSAGE);
+		userSelectionIndex = JOptionPane.showConfirmDialog(null,panel,"Search for flight by airports", JOptionPane.PLAIN_MESSAGE);
 		//Validation
-		
-		for(int i = 0; (i < airportDetails.size() &&(found1 != true || found2 != true)); i++)
-		{
-			if(departureAirport.getText().equalsIgnoreCase(airportDetails.get(i).getAirportName()))
-			{
-				airport1 = airportDetails.get(i).getIATA();
-				found1 = true;
-			}
-			if(arrivalAirport.getText().equalsIgnoreCase(airportDetails.get(i).getAirportName()))
-			{
-				airport2 = airportDetails.get(i).getIATA();
-				found2 = true;
-			}
-		}
-		
-		if ((departureAirport.getText().length() == 0) || (arrivalAirport.getText().length() == 0))
-		{
-			JOptionPane.showMessageDialog(null,errorMessage2,"Input Error",JOptionPane.ERROR_MESSAGE);
-		}
-		else if (airport1.equalsIgnoreCase(airport2) && airport1.length() != 0)
-		{
-			JOptionPane.showMessageDialog(null,errorMessage1,"Input Error",JOptionPane.ERROR_MESSAGE);
-		}
+		if (userSelectionIndex == JOptionPane.CANCEL_OPTION || userSelectionIndex == JOptionPane.CLOSED_OPTION)
+			JOptionPane.showMessageDialog(null,cancel,"Cancelled",JOptionPane.ERROR_MESSAGE);
 		else
 		{
-			while((airport1.length() > 0) && (airport2.length() > 0) && (index < flightDetails.size()))
+			for(int i = 0; (i < airportDetails.size() &&(found1 != true || found2 != true)); i++)
 			{
-				if((flightDetails.get(index).getDepartureIATA()).equalsIgnoreCase(airport1) && (flightDetails.get(index).getArrivalIATA()).equalsIgnoreCase(airport2))
+				if(departureAirport.getText().equalsIgnoreCase(airportDetails.get(i).getAirportName()))
 				{
-					result += flightDetails.get(index).getAll();
-					result += "\n";
-					amountFound++;
+					airport1 = airportDetails.get(i).getIATA();
+					found1 = true;
 				}
-				index++;
+				if(arrivalAirport.getText().equalsIgnoreCase(airportDetails.get(i).getAirportName()))
+				{
+					airport2 = airportDetails.get(i).getIATA();
+					found2 = true;
+				}
 			}
-			if(amountFound == 0)
+			
+			if ((departureAirport.getText().length() == 0) || (arrivalAirport.getText().length() == 0))
 			{
-				failure = ("No flights are departing " + departureAirport.getText() + " and arriving at " + arrivalAirport.getText() + ".");
-				JOptionPane.showMessageDialog(null,failure,"No Flights Found", JOptionPane.PLAIN_MESSAGE);
+				JOptionPane.showMessageDialog(null,errorMessage2,"Input Error",JOptionPane.ERROR_MESSAGE);
+			}
+			else if (airport1.equalsIgnoreCase(airport2) && airport1.length() != 0)
+			{
+				JOptionPane.showMessageDialog(null,errorMessage1,"Input Error",JOptionPane.ERROR_MESSAGE);
 			}
 			else
-			{	
-				success = (amountFound + " flight(s) found departing " + departureAirport.getText() + " and arriving at " + arrivalAirport.getText() + ":\n");
-				JOptionPane.showMessageDialog(null,(success + result),"Flights Found", JOptionPane.PLAIN_MESSAGE);
+			{
+				while((airport1.length() > 0) && (airport2.length() > 0) && (index < flightDetails.size()))
+				{
+					if((flightDetails.get(index).getDepartureIATA()).equalsIgnoreCase(airport1) && (flightDetails.get(index).getArrivalIATA()).equalsIgnoreCase(airport2))
+					{
+						result += flightDetails.get(index).getAll();
+						result += "\n";
+						amountFound++;
+					}
+					index++;
+				}
+				if(amountFound == 0)
+				{
+					failure = ("No flights are departing " + departureAirport.getText() + " and arriving at " + arrivalAirport.getText() + ".");
+					JOptionPane.showMessageDialog(null,failure,"No Flights Found", JOptionPane.PLAIN_MESSAGE);
+				}
+				else
+				{	
+					success = (amountFound + " flight(s) found departing " + departureAirport.getText() + " and arriving at " + arrivalAirport.getText() + ":\n");
+					JOptionPane.showMessageDialog(null,(success + result),"Flights Found", JOptionPane.PLAIN_MESSAGE);
+				}
 			}
 		}
 	}
@@ -148,7 +154,8 @@ public class Project4Test
 		boolean found = false;
 		String success = " successfully added!";
 		String failure = "New flight could not be added. Flight existed previously.";
-		
+		String cancel = "User cancelled, no flight added.";
+			
 		JPanel panel = new JPanel();
 		
 		JTextField flightNumberField = new JTextField();
@@ -180,22 +187,26 @@ public class Project4Test
 		panel.add(new JLabel("End Dates:   e.g. DD/MM/YYYY or 11/12/2017"));
 		panel.add(endDatesField);
 		
-		JOptionPane.showMessageDialog(null, panel, "Add New Flight", JOptionPane.PLAIN_MESSAGE);
+		userSelectionIndex = JOptionPane.showConfirmDialog(null, panel, "Add New Flight", JOptionPane.PLAIN_MESSAGE);
 		//Call for validation
-		
-		Flights tempFlight = new Flights(flightNumberField.getText(),departureIATIField.getText(),arrivalIATIField.getText(),departureTimeField.getText(),arrivalTimeField.getText(),operatingDaysField.getText(),startDatesField.getText(),endDatesField.getText());
-		for(int i = 0; i < flightDetails.size() && !found; i++)
+		if (userSelectionIndex == JOptionPane.CANCEL_OPTION || userSelectionIndex == JOptionPane.CLOSED_OPTION)
+			JOptionPane.showMessageDialog(null,cancel,"Cancelled",JOptionPane.ERROR_MESSAGE);
+		else
 		{
-			if(flightDetails.get(i).getFlightNumber().compareToIgnoreCase(tempFlight.getFlightNumber()) == 0)
+			Flights tempFlight = new Flights(flightNumberField.getText(),departureIATIField.getText(),arrivalIATIField.getText(),departureTimeField.getText(),arrivalTimeField.getText(),operatingDaysField.getText(),startDatesField.getText(),endDatesField.getText());
+			for(int i = 0; i < flightDetails.size() && !found; i++)
 			{
-				found = true;
-				JOptionPane.showMessageDialog(null,failure,"Add Fight Failed", JOptionPane.ERROR_MESSAGE);
-			}
-			else if(flightDetails.get(i).getFlightNumber().compareToIgnoreCase(tempFlight.getFlightNumber()) > 0)
-			{
-				flightDetails.add(i,tempFlight);
-				found = true;
-				JOptionPane.showMessageDialog(null,"Flight " + flightNumberField.getText() + success,"Flight Added", JOptionPane.PLAIN_MESSAGE);
+				if(flightDetails.get(i).getFlightNumber().compareToIgnoreCase(tempFlight.getFlightNumber()) == 0)
+				{
+					found = true;
+					JOptionPane.showMessageDialog(null,failure,"Add Fight Failed", JOptionPane.ERROR_MESSAGE);
+				}
+				else if(flightDetails.get(i).getFlightNumber().compareToIgnoreCase(tempFlight.getFlightNumber()) > 0)
+				{
+					flightDetails.add(i,tempFlight);
+					found = true;
+					JOptionPane.showMessageDialog(null,"Flight " + flightNumberField.getText() + success,"Flight Added", JOptionPane.PLAIN_MESSAGE);
+				}
 			}
 		}
 	}
